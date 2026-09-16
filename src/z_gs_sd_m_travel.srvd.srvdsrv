@@ -1,0 +1,16 @@
+@EndUserText.label: 'Travel Processor Scenario Service Definition'
+define service Z_GS_SD_M_TRAVEL {
+  expose Z_GS_M_TRAVEL_PROCESSOR    as Travel;
+  expose Z_GS_M_BOOKING_PROCESSOR   as Booking;
+  expose Z_GS_M_BOOKSUPPL_PROCESSOR as BookSuppl;
+  expose /DMO/I_Agency              as Agency;
+  expose /DMO/I_Customer            as Customer;
+  expose I_Currency                 as Currency;
+  expose /DMO/I_Carrier             as Carrier;
+  expose /DMO/I_Connection          as Connection;
+  expose /DMO/I_Flight              as Flight;
+  expose /DMO/I_Supplement          as Supplement;
+  expose /DMO/I_SupplementText      as SupplementText;
+  expose /DMO/I_Overall_Status_VH   as TravelStatus;
+  expose /DMO/I_Booking_Status_VH   as BookStatus;
+}
