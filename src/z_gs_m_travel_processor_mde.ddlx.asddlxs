@@ -1,0 +1,33 @@
+@Metadata.layer: #CUSTOMER
+@UI.headerInfo:{
+    typeName: 'Travel Request',
+    typeNamePlural: 'Travel Requests',
+    title: { value : 'TravelId' },
+    description: { value: 'Description' }
+}
+annotate entity Z_GS_M_TRAVEL_PROCESSOR
+    with 
+{
+    @UI.selectionField: [{ position: 10 }]
+    @UI.lineItem: [{ position: 10, importance: #HIGH }]
+    TravelId;
+    @UI.selectionField: [{ position: 20 }]
+    @UI.lineItem: [{ position: 20 }]
+    AgencyId;
+    @UI.selectionField: [{ position: 30 }]
+    @UI.lineItem: [{ position: 30 }]
+    CustomerId;
+    @UI.lineItem: [{ position: 40 }]
+    BeginDate;
+//    EndDate;
+//    BookingFee;
+    @UI.selectionField: [{ position: 40 }]
+    @UI.lineItem: [{ position: 50 }]
+    TotalPrice;
+//    @UI.lineItem: [{ position: 60 }]
+//    CurrencyCode;
+//    Description;
+    @UI.selectionField: [{ position: 50 }]
+    @UI.lineItem: [{ position: 70, importance: #HIGH, criticality: 'Stat' }]
+    OverallStatus;
+}
