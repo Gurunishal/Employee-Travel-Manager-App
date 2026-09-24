@@ -1,0 +1,69 @@
+@Metadata.layer: #CUSTOMER
+annotate entity Z_GS_M_BOOKING_PROCESSOR
+    with 
+{
+
+    @UI.facet: [
+                    {  
+                        id: 'BookingInfo',
+                        type: #COLLECTION,
+                        label: 'Booking Information',
+                        position: 10 //first tab
+                    },
+                    
+                    {  
+                        id: 'moreInfo',
+                        type: #IDENTIFICATION_REFERENCE,
+                        parentId: 'BookingInfo', //add under first tab
+                        position: 10, //first block under collection
+                        label: 'More Information'
+                    },
+                    
+                    { 
+                        id: 'bookinggroup1',
+                        type: #FIELDGROUP_REFERENCE,
+                        parentId: 'BookingInfo',
+                        position: 20, //add 2nd block in collection
+                        label: 'Date Data',
+                        targetQualifier: 'bg1'
+                    },
+                    
+                    { 
+                        id: 'bookinggroup2',
+                        type: #FIELDGROUP_REFERENCE,
+                        parentId: 'BookingInfo',
+                        position: 30, //add 3rd block in collection
+                        label: 'Price Data',
+                        targetQualifier: 'bg2'
+                    }
+               ]
+//    TravelId;
+    @UI.selectionField: [{ position: 10 }]
+    @UI.lineItem: [{ position: 10 }]
+    @UI.identification: [ {  position: 10 } ]
+    BookingId;
+    @UI.lineItem: [{ position: 20 }]
+    @UI.fieldGroup: [ { position: 20, qualifier: 'bg1'} ]
+    BookingDate;
+    @UI.selectionField: [{ position: 20 }]
+    @UI.lineItem: [{ position: 20 }]
+    @UI.identification: [ {  position: 20 } ]
+    CustomerId;
+    @UI.selectionField: [{ position: 30 }]
+    @UI.lineItem: [{ position: 30 }]
+    @UI.identification: [ {  position: 30 } ]
+    CarrierId;
+    @UI.selectionField: [{ position: 40 }]
+    @UI.lineItem: [{ position: 40 }]
+    @UI.identification: [ {  position: 40 } ]
+    ConnectionId;
+    @UI.fieldGroup: [ { position: 30, qualifier: 'bg1'} ]
+    FlightDate;
+    @UI.lineItem: [{ position: 70 }]
+    @UI.fieldGroup: [ { position: 20, qualifier: 'bg2'} ]
+    FlightPrice;
+//    CurrencyCode;
+//    BookingStatus;
+//    LastChangedAt;
+  
+}

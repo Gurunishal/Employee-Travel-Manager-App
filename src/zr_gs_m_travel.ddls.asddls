@@ -13,18 +13,55 @@ association[1] to I_Currency as _Currency on
 association[1] to /DMO/I_Overall_Status_VH as _OverallStatus on
     $projection.OverallStatus = _OverallStatus.OverallStatus
 {
+    @ObjectModel.text.element: [ 'Description' ]
     key travel_id as TravelId,
+    @ObjectModel.text.element: [ 'AgencyName' ]
+    @Consumption.valueHelpDefinition: [
+                 {
+                     entity.name: '/DMO/I_Agency',
+                     entity.element: 'AgencyID'
+                 }
+    ]
     agency_id as AgencyId,
+    _Agency.Name as AgencyName,
+    @ObjectModel.text.element: [ 'CustomerName' ]
+    @Consumption.valueHelpDefinition: [
+                 {
+                     entity.name: '/DMO/I_Customer',
+                     entity.element: 'CustomerID'
+                 }
+    ]
     customer_id as CustomerId,
+    concat(_Customer.LastName, concat(' ', _Customer.FirstName)) as CustomerName,
     begin_date as BeginDate,
     end_date as EndDate,
     @Semantics.amount.currencyCode: 'CurrencyCode'
     booking_fee as BookingFee,
     @Semantics.amount.currencyCode: 'CurrencyCode'
     total_price as TotalPrice,
+    @Consumption.valueHelpDefinition: [
+                 {
+                     entity.name: 'I_Currency',
+                     entity.element: 'Currency'
+                 }
+    ]
     currency_code as CurrencyCode,
     description as Description,
+    @Consumption.valueHelpDefinition: [
+                 {
+                     entity.name: '/DMO/I_Overall_Status_VH',
+                     entity.element: 'OverallStatus'
+                 }
+    ]
+    @ObjectModel.text.element: [ 'StatusText' ]
     overall_status as OverallStatus,
+    _OverallStatus._Text[Language = $session.system_language].Text as StatusText,
+    case overall_status 
+        when 'O' then 2
+        when 'A' then 3
+        when 'X' then 1
+        else 0
+        end as Stat,
     @Semantics.user.createdBy: true
     created_by as CreatedBy,
     @Semantics.systemDateTime.createdAt: true

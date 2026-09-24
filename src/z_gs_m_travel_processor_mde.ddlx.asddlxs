@@ -8,26 +8,80 @@
 annotate entity Z_GS_M_TRAVEL_PROCESSOR
     with 
 {
+    @UI.facet: [ 
+                    {  
+                        id: 'TravelCollection',
+                        type: #COLLECTION,
+                        label: 'General Information',
+                        position: 10 //first tab
+                    },
+                     
+                    {  
+                        id: 'moreInfo',
+                        type: #IDENTIFICATION_REFERENCE,
+                        parentId: 'TravelCollection', //add under first tab
+                        position: 10, //first block under collection
+                        label: 'More Information'
+                    },
+                    
+                    { 
+                        id: 'fieldgroup1',
+                        type: #FIELDGROUP_REFERENCE,
+                        parentId: 'TravelCollection',
+                        position: 20, //add 2nd block in collection
+                        label: 'Dates Data',
+                        targetQualifier: 'fg1'
+                    },
+                    
+                    { 
+                        id: 'fieldgroup2',
+                        type: #FIELDGROUP_REFERENCE,
+                        parentId: 'TravelCollection',
+                        position: 30, //add 3rd block in collection
+                        label: 'Price Data',
+                        targetQualifier: 'fg2'
+                    },
+                    
+                    { 
+                        id: 'itemdata',
+                        type: #LINEITEM_REFERENCE,
+                        label: 'Bookings',
+                        position: 20,
+                        targetElement: '_Booking'
+                    }
+                    
+                ]
+    
     @UI.selectionField: [{ position: 10 }]
     @UI.lineItem: [{ position: 10, importance: #HIGH }]
+    @UI.identification: [ {  position: 10 } ]
     TravelId;
     @UI.selectionField: [{ position: 20 }]
     @UI.lineItem: [{ position: 20 }]
+    @UI.identification: [ {  position: 20 } ]
     AgencyId;
     @UI.selectionField: [{ position: 30 }]
     @UI.lineItem: [{ position: 30 }]
+    @UI.identification: [ {  position: 30 } ]
     CustomerId;
     @UI.lineItem: [{ position: 40 }]
+    @UI.fieldGroup: [ { position: 20, qualifier: 'fg1'} ]
     BeginDate;
-//    EndDate;
-//    BookingFee;
+    @UI.fieldGroup: [ { position: 30, qualifier: 'fg1'} ]
+    EndDate;
+    @UI.fieldGroup: [ { position: 20, qualifier: 'fg2'} ]
+    BookingFee;
     @UI.selectionField: [{ position: 40 }]
     @UI.lineItem: [{ position: 50 }]
+    @UI.fieldGroup: [ { position: 10, qualifier: 'fg2'} ]
     TotalPrice;
 //    @UI.lineItem: [{ position: 60 }]
-//    CurrencyCode;
-//    Description;
+    @UI.fieldGroup: [ { position: 30, qualifier: 'fg2'} ]
+    CurrencyCode;
+    @UI.fieldGroup: [ { position: 10, qualifier: 'fg1'} ]
+    Description;
     @UI.selectionField: [{ position: 50 }]
     @UI.lineItem: [{ position: 70, importance: #HIGH, criticality: 'Stat' }]
+    @UI.fieldGroup: [ { position: 40, qualifier: 'fg2'} ]
     OverallStatus;
 }

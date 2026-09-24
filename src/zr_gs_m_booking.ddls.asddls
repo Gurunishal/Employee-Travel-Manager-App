@@ -23,14 +23,59 @@ association[1] to /DMO/I_Booking_Status_VH as _BookStatus on
     key travel_id as TravelId,
     key booking_id as BookingId,
     booking_date as BookingDate,
+    @ObjectModel.text.element: [ 'CustomerName' ]
+    @Consumption.valueHelpDefinition: [
+                 {
+                     entity.name: '/DMO/I_Customer',
+                     entity.element: 'CustomerID'
+                 }
+    ]
     customer_id as CustomerId,
+    _Customer.LastName as CustomerName,
+    @Consumption.valueHelpDefinition: [
+                 {
+                     entity.name: '/DMO/I_Carrier',
+                     entity.element: 'AirlineID'
+                 }
+    ]
+    @ObjectModel.text.element: [ 'AirlineName' ]
     carrier_id as CarrierId,
+    _Carrier.Name as AirlineName,
+    @Consumption.valueHelpDefinition: [
+                 {
+                     entity.name: '/DMO/I_Connection',
+                     entity.element: 'ConnectionID',
+                     additionalBinding: [
+                        {
+                            element: 'AirlineID',
+                            localElement: 'CarrierID'
+                        }
+                     ]
+                     
+                 }
+    ]
     connection_id as ConnectionId,
     flight_date as FlightDate,
     @Semantics.amount.currencyCode: 'CurrencyCode'
     flight_price as FlightPrice,
+    @Consumption.valueHelpDefinition: [
+                 {
+                     entity.name: '/DMO/I_Booking_Status_VH',
+                     entity.element: 'BookingStatus'
+                     
+                 }
+    ]
     currency_code as CurrencyCode,
+    @Consumption.valueHelpDefinition: [
+                 {
+                     entity.name: 'I_Currency',
+                     entity.element: 'Currency'
+                     
+                 }
+    ]
     booking_status as BookingStatus,
+    _BookStatus._Text[ Language = $session.system_language].Text as BookingStatusText,
+    @Semantics.systemDateTime.lastChangedAt: true
     last_changed_at as LastChangedAt,
     _Customer,
     _Carrier,
