@@ -48,6 +48,20 @@ annotate entity Z_GS_M_TRAVEL_PROCESSOR
                         label: 'Bookings',
                         position: 20,
                         targetElement: '_Booking'
+                    },
+                    
+                    { 
+                        purpose: #HEADER,
+                        type: #DATAPOINT_REFERENCE,
+                        position: 10,
+                        targetQualifier: 'priceData'
+                    },
+                    
+                    { 
+                        purpose: #HEADER,
+                        type: #DATAPOINT_REFERENCE,
+                        position: 20,
+                        targetQualifier: 'statusData'
                     }
                     
                 ]
@@ -74,6 +88,7 @@ annotate entity Z_GS_M_TRAVEL_PROCESSOR
     @UI.selectionField: [{ position: 40 }]
     @UI.lineItem: [{ position: 50 }]
     @UI.fieldGroup: [ { position: 10, qualifier: 'fg2'} ]
+    @UI.dataPoint: { qualifier: 'priceData', title: 'Total Cost of Travel' }
     TotalPrice;
 //    @UI.lineItem: [{ position: 60 }]
     @UI.fieldGroup: [ { position: 30, qualifier: 'fg2'} ]
@@ -83,5 +98,6 @@ annotate entity Z_GS_M_TRAVEL_PROCESSOR
     @UI.selectionField: [{ position: 50 }]
     @UI.lineItem: [{ position: 70, importance: #HIGH, criticality: 'Stat' }]
     @UI.fieldGroup: [ { position: 40, qualifier: 'fg2'} ]
+    @UI.dataPoint: { qualifier: 'statusData', title: 'Travel Status' }
     OverallStatus;
 }

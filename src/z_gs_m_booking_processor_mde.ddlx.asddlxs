@@ -1,4 +1,10 @@
 @Metadata.layer: #CUSTOMER
+@UI.headerInfo:{
+    typeName: 'Booking',
+    typeNamePlural: 'Bookings',
+    title: { value: '_Carrier.Name' },
+    description: { value: '_Connection.DepartureAirport' }
+}
 annotate entity Z_GS_M_BOOKING_PROCESSOR
     with 
 {
