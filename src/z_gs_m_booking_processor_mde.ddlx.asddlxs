@@ -22,7 +22,8 @@ annotate entity Z_GS_M_BOOKING_PROCESSOR
                         type: #IDENTIFICATION_REFERENCE,
                         parentId: 'BookingInfo', //add under first tab
                         position: 10, //first block under collection
-                        label: 'More Information'
+                        label: 'More Information',
+                        targetQualifier: 'bg1'
                     },
                     
                     { 
@@ -31,7 +32,7 @@ annotate entity Z_GS_M_BOOKING_PROCESSOR
                         parentId: 'BookingInfo',
                         position: 20, //add 2nd block in collection
                         label: 'Date Data',
-                        targetQualifier: 'bg1'
+                        targetQualifier: 'bg2'
                     },
                     
                     { 
@@ -40,33 +41,33 @@ annotate entity Z_GS_M_BOOKING_PROCESSOR
                         parentId: 'BookingInfo',
                         position: 30, //add 3rd block in collection
                         label: 'Price Data',
-                        targetQualifier: 'bg2'
+                        targetQualifier: 'bg3'
                     }
                ]
 //    TravelId;
     @UI.selectionField: [{ position: 10 }]
     @UI.lineItem: [{ position: 10 }]
-    @UI.identification: [ {  position: 10 } ]
+    @UI.identification: [ {  position: 10, qualifier: 'bg1' } ]
     BookingId;
     @UI.lineItem: [{ position: 20 }]
-    @UI.fieldGroup: [ { position: 20, qualifier: 'bg1'} ]
+    @UI.fieldGroup: [ { position: 20, qualifier: 'bg2'} ]
     BookingDate;
     @UI.selectionField: [{ position: 20 }]
     @UI.lineItem: [{ position: 20 }]
-    @UI.identification: [ {  position: 20 } ]
+    @UI.identification: [ {  position: 20, qualifier: 'bg1' } ]
     CustomerId;
     @UI.selectionField: [{ position: 30 }]
     @UI.lineItem: [{ position: 30 }]
-    @UI.identification: [ {  position: 30 } ]
+    @UI.identification: [ {  position: 30, qualifier: 'bg1' } ]
     CarrierId;
     @UI.selectionField: [{ position: 40 }]
     @UI.lineItem: [{ position: 40 }]
-    @UI.identification: [ {  position: 40 } ]
+    @UI.identification: [ {  position: 40, qualifier: 'bg1' } ]
     ConnectionId;
-    @UI.fieldGroup: [ { position: 30, qualifier: 'bg1'} ]
+    @UI.fieldGroup: [ { position: 30, qualifier: 'bg2'} ]
     FlightDate;
     @UI.lineItem: [{ position: 70 }]
-    @UI.fieldGroup: [ { position: 20, qualifier: 'bg2'} ]
+    @UI.fieldGroup: [ { position: 20, qualifier: 'bg3'} ]
     FlightPrice;
 //    CurrencyCode;
 //    BookingStatus;

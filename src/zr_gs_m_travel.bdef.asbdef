@@ -1,0 +1,84 @@
+managed implementation in class zbp_r_gs_m_travel unique; //type of implementation (greenfield)
+strict ( 2 ); //best practice
+
+//defining behavior definition
+define behavior for ZR_GS_M_TRAVEL alias Travel
+persistent table /dmo/travel_m //framework will create code for CRUD, tell table which db table it has to interact with
+lock master //which entity is considered as super entity for the lock mechanism
+authorization master ( instance ) //Authority check to ensure the valid user is performing task on the transaction
+etag master LastChangedAt //to manage concurrency control
+{
+  create ( authorization : global ); //Authority check to ensure the valid user is performing task on the transaction
+  update;
+  delete;
+  //field ( readonly ) TravelId;
+
+  association _Booking { create; }  //direct booking without a travel is not possible
+
+  mapping for /dmo/travel_m {
+    travelid = travel_id;
+    agencyid = agency_id;
+    customerid = customer_id;
+    begindate = begin_date;
+    enddate = end_date;
+    totalprice = total_price;
+    bookingfee = booking_fee;
+    CurrencyCode = currency_code;
+    description = description;
+    OverallStatus = overall_status;
+    CreatedBy = created_by;
+    CreatedAt = created_at;
+    LastChangedAt = last_changed_at;
+    LastChangedBy = last_changed_by;
+
+  }
+}
+
+define behavior for ZR_GS_M_BOOKING alias Booking
+persistent table /dmo/booking_m //framework will create code for CRUD, tell table which db table it has to interact with
+lock dependent by _Travel
+authorization dependent by _Travel
+etag master LastChangedAt
+{
+  update;
+  delete;
+  field ( readonly ) TravelId;
+  association _Travel;
+  association _BookSuppl { create; }
+
+  mapping for /dmo/booking_m {
+    TravelId = travel_id;
+    BookingId = booking_id;
+    CustomerId = customer_id;
+    CarrierId = carrier_id;
+    ConnectionId = connection_id;
+    FlightDate = flight_date;
+    FlightPrice = flight_price;
+    CurrencyCode = currency_code;
+    BookingStatus = booking_status;
+    LastChangedAt = last_changed_at;
+  }
+}
+
+define behavior for ZR_GS_M_BOOKSUPPPL alias BookSuppl
+persistent table /dmo/booksuppl_m //framework will create code for CRUD, tell table which db table it has to interact with
+lock dependent by _Travel
+authorization dependent by _Travel
+etag master LastChangedAt
+{
+  update;
+  delete;
+  field ( readonly ) TravelId, BookingId;
+  association _Travel;
+  association _Booking;
+
+  mapping for /dmo/booksuppl_m {
+    TravelId = travel_id;
+    BookingId = booking_id;
+    BookingSupplementId = booking_supplement_id;
+    SupplementId = supplement_id;
+    Price = price;
+    CurrencyCode = currency_code;
+    LastChangedAt = last_changed_at;
+  }
+}

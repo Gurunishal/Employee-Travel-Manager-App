@@ -60,8 +60,8 @@ association[1] to /DMO/I_Booking_Status_VH as _BookStatus on
     flight_price as FlightPrice,
     @Consumption.valueHelpDefinition: [
                  {
-                     entity.name: '/DMO/I_Booking_Status_VH',
-                     entity.element: 'BookingStatus'
+                     entity.name: 'I_Currency',
+                     entity.element: 'Currency'
                      
                  }
     ]
