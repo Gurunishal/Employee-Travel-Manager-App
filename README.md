@@ -22,3 +22,10 @@ Step by Step dev flow:
         - redirected to composition child/parent in Projection to form Business Object
     - Service definition for processor
     - Service binding for processor
+ 
+- MetaData Extension for Processor:
+    - Whereas we have MDE - metadata extension file, which enrich cds with annotations related to only UI - @UI.
+    - Layers:
+        - #CORE
+        - #PARTNER
+        - #CUSTOMER
