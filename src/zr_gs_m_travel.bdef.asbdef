@@ -6,14 +6,16 @@ define behavior for ZR_GS_M_TRAVEL alias Travel
 persistent table /dmo/travel_m //framework will create code for CRUD, tell table which db table it has to interact with
 lock master //which entity is considered as super entity for the lock mechanism
 authorization master ( instance ) //Authority check to ensure the valid user is performing task on the transaction
+
 etag master LastChangedAt //to manage concurrency control
+early numbering //early numbering to generate travel id
 {
   create ( authorization : global ); //Authority check to ensure the valid user is performing task on the transaction
   update;
   delete;
   //field ( readonly ) TravelId;
 
-  association _Booking { create; }  //direct booking without a travel is not possible
+  association _Booking { create (features:instance); }  //direct booking without a travel is not possible
 
   mapping for /dmo/travel_m {
     travelid = travel_id;
@@ -39,12 +41,14 @@ persistent table /dmo/booking_m //framework will create code for CRUD, tell tabl
 lock dependent by _Travel
 authorization dependent by _Travel
 etag master LastChangedAt
+early numbering //early numbering to generate booking id
 {
   update;
   delete;
   field ( readonly ) TravelId;
+  field ( features : instance ) ConnectionId;
   association _Travel;
-  association _BookSuppl { create; }
+  association _BookSuppl { create (features:instance); }
 
   mapping for /dmo/booking_m {
     TravelId = travel_id;

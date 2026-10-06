@@ -21,7 +21,7 @@ association[1] to /DMO/I_Booking_Status_VH as _BookStatus on
 
 {
     key travel_id as TravelId,
-    key booking_id as BookingId,
+    key booking_id as BookingId, 
     booking_date as BookingDate,
     @ObjectModel.text.element: [ 'CustomerName' ]
     @Consumption.valueHelpDefinition: [
@@ -48,7 +48,7 @@ association[1] to /DMO/I_Booking_Status_VH as _BookStatus on
                      additionalBinding: [
                         {
                             element: 'AirlineID',
-                            localElement: 'CarrierID'
+                            localElement: 'CarrierId'
                         }
                      ]
                      
