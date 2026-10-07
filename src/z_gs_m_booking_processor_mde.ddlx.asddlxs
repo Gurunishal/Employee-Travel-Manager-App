@@ -42,6 +42,14 @@ annotate entity Z_GS_M_BOOKING_PROCESSOR
                         position: 30, //add 3rd block in collection
                         label: 'Price Data',
                         targetQualifier: 'bg3'
+                    },
+                    
+                    { 
+                        id: 'itemdata',
+                        type: #LINEITEM_REFERENCE,
+                        label: 'Supplements',
+                        position: 20,
+                        targetElement: '_BookSuppl'
                     }
                ]
 //    TravelId;

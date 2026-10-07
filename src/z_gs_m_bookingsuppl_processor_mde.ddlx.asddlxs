@@ -1,0 +1,37 @@
+@Metadata.layer: #CUSTOMER
+@UI.headerInfo:{
+    typeName: 'Supplement',
+    typeNamePlural: 'Supplements',
+    title: { value: 'SupplementId' },
+    description: {  value: '_ProductText.Description' }
+}
+annotate entity Z_GS_M_BOOKSUPPL_PROCESSOR
+    with 
+{
+    @UI.facet: [{ 
+        type: #IDENTIFICATION_REFERENCE,
+        label: 'Supplement Details',
+        position: 10
+     }]
+//    TravelId;
+//    BookingId;
+    @UI.lineItem: [{ position: 10 }]
+    @UI.identification: [{ position: 10 }]
+    BookingSupplementId;
+    @UI.lineItem: [{ position: 20 }]
+    @UI.identification: [{ position: 20 }]
+    SupplementId;
+    @UI.lineItem: [{ position: 30 }]
+    @UI.identification: [{ position: 30 }]
+    Price;
+    @UI.lineItem: [{ position: 40 }]
+    @UI.identification: [{ position: 40 }]
+    CurrencyCode;
+    @UI.identification: [{ position: 50 }]
+    LastChangedAt;
+    /* Associations */
+//    _Booking;
+//    _Product;
+//    _ProductText;
+//    _Travel;
+}
