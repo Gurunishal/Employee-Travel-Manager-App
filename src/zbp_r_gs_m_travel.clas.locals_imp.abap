@@ -44,6 +44,8 @@ CLASS lhc_Travel DEFINITION INHERITING FROM cl_abap_behavior_handler.
       REQUEST requested_authorizations FOR Travel RESULT result.
     METHODS get_instance_features FOR INSTANCE FEATURES
       keys REQUEST requested_features FOR Travel RESULT result.
+    METHODS copytravel FOR MODIFY
+      keys FOR ACTION travel~copytravel.
     METHODS earlynumbering_cba_Booking FOR NUMBERING
       entities FOR CREATE Travel\_Booking.
     METHODS earlynumbering_create FOR NUMBERING
@@ -194,6 +196,70 @@ CLASS lhc_Travel IMPLEMENTATION.
                           %tky = travel-%tky
                           %assoc-_Booking = lv_allow
                            ) ).
+
+  ENDMETHOD.
+
+  METHOD copyTravel.
+
+    "Step 1: Declare new Internal table to store data to be created
+    Data: travels type table for create zr_gs_m_travel\\Travel,
+          bookings_cba type table for create zr_gs_m_travel\\Travel\_Booking.
+
+    "Step 2: Remove the travel instances with initial %cid
+    read table keys WITH key %cid = '' into data(key_with_initial_cid).
+    assert key_with_initial_cid is INITIAL.
+
+    "Step 3: Read all the travel data for incoming travel id
+    READ entities of zr_gs_m_travel in LOCAL mode
+        entity travel
+            all fields with corresponding  #( keys )
+            result data(lt_travel)
+            failed failed.
+
+    READ entities of zr_gs_m_travel in LOCAL mode
+        entity travel by \_Booking
+            all fields with corresponding  #( keys )
+            result data(lt_booking)
+            failed failed.
+
+    "Step 4: Loop at actual data and prepare our table to create new travel req
+    loop AT lt_travel ASSIGNING FIELD-SYMBOL(<travel>).
+        APPEND value #( %cid = keys[ %tky = <travel>-%tky ]-%cid
+                        %data = corresponding #( <travel> except travelid )
+            ) to travels assigning FIELD-SYMBOL(<new_travel>).
+
+            <new_travel>-BeginDate = cl_abap_context_info=>get_system_date( ).
+            <new_travel>-EndDate = cl_abap_context_info=>get_system_date( ) + 5.
+            <new_travel>-OverallStatus = 'O'.
+    ENDLOOP.
+
+    "Step 4.1: Fill the booking internal table for data creation - deep copy
+    append value #( %cid_ref = keys[ %tky = <travel>-%tky ]-%cid
+                    ) to bookings_cba assigning field-symbol(<bookings_cba>).
+
+    LOOP AT lt_booking assigning FIELD-SYMBOL(<booking>) where travelid = <travel>-TravelId.
+
+        APPEND value #( %cid = keys[ %tky = <travel>-%tky ]-%cid && <booking>-BookingId
+                        %data = CORRESPONDING #( lt_booking[ key entity %tky = <booking>-%tky ] except travelid )
+                        ) to <bookings_cba>-%target assigning FIELD-SYMBOL(<new_booking>).
+
+        <new_booking>-BookingStatus = 'N'.
+
+
+    ENDLOOP.
+
+    "Step 5: Fire EML to create new data in db
+    MODIFY ENTITIES of zr_gs_m_travel in LOCAL MODE
+        ENTITY TRAVEL
+            CREATE FIELDS ( agencyid customerid BeginDate EndDate BookingFee TotalPrice CurrencyCode OverallStatus )
+                WITH travels
+            CREATE BY \_Booking fields ( BookingId BookingDate CustomerId CarrierId ConnectionId FlightDate FlightPrice CurrencyCode BookingStatus )
+                with bookings_cba
+
+            mapped data(mapped_create).
+
+
+    mapped-travel = mapped_create-travel.
 
   ENDMETHOD.
 

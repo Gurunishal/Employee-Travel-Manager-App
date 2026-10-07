@@ -14,6 +14,11 @@ early numbering //early numbering to generate travel id
   update;
   delete;
   //field ( readonly ) TravelId;
+  field ( mandatory ) begindate, enddate, description, agencyid, customerid;
+
+  //Factory Instance Bound Data Action
+  factory action copyTravel[1];
+
 
   association _Booking { create (features:instance); }  //direct booking without a travel is not possible
 
