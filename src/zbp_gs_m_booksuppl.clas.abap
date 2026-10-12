@@ -1,0 +1,5 @@
+CLASS zbp_gs_m_booksuppl DEFINITION PUBLIC ABSTRACT FINAL FOR BEHAVIOR OF zr_gs_m_travel.
+ENDCLASS.
+
+CLASS zbp_gs_m_booksuppl IMPLEMENTATION.
+ENDCLASS.

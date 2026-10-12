@@ -1,39 +1,3 @@
-CLASS lhc_booking DEFINITION INHERITING FROM cl_abap_behavior_handler.
-
-  PRIVATE SECTION.
-
-    METHODS get_instance_features FOR INSTANCE FEATURES
-      keys REQUEST requested_features FOR Booking RESULT result.
-
-ENDCLASS.
-
-CLASS lhc_booking IMPLEMENTATION.
-
-  METHOD get_instance_features.
-
-    "Step 1: Read data using EML
-    READ ENTITIES OF zr_gs_m_travel in LOCAL MODE
-        entity Booking
-            fields ( CarrierId )
-            with CORRESPONDING #( keys )
-            result data(lt_bookings)
-            failed failed.
-    "Step 2: Return the result to check whether the Carrier ID is AA
-    READ TABLE lt_bookings into data(ls_bookings) index 1.
-
-    "Step 3: Determine if the Carrier ID is AA
-    result = VALUE #(
-        FOR booking IN lt_bookings
-            ( %tky = booking-%tky
-            %field-ConnectionId = COND #(
-                WHEN booking-CarrierId = 'AA'
-                THEN if_abap_behv=>fc-f-unrestricted
-                ELSE if_abap_behv=>fc-f-read_only ) ) ).
-
-  ENDMETHOD.
-
-ENDCLASS.
-
 CLASS lhc_Travel DEFINITION INHERITING FROM cl_abap_behavior_handler.
   PRIVATE SECTION.
 
@@ -46,10 +10,14 @@ CLASS lhc_Travel DEFINITION INHERITING FROM cl_abap_behavior_handler.
       keys REQUEST requested_features FOR Travel RESULT result.
     METHODS copytravel FOR MODIFY
       keys FOR ACTION travel~copytravel.
+    METHODS calctotalprice FOR MODIFY
+      keys FOR ACTION travel~calctotalprice.
     METHODS earlynumbering_cba_Booking FOR NUMBERING
       entities FOR CREATE Travel\_Booking.
     METHODS earlynumbering_create FOR NUMBERING
       entities FOR CREATE Travel.
+    METHODS calculatetotalprice FOR DETERMINE ON MODIFY
+      keys FOR travel~calculatetotalprice.
 
 ENDCLASS.
 
@@ -260,6 +228,102 @@ CLASS lhc_Travel IMPLEMENTATION.
 
 
     mapped-travel = mapped_create-travel.
+
+  ENDMETHOD.
+
+  METHOD calcTotalPrice.
+*   Step 1. Define a structure to store amount + currency
+    types:BEGIN OF ty_amount_per_currency,
+            amount TYPE /dmo/total_price,
+            currency_code TYPE /dmo/currency_code,
+          end of ty_amount_per_currency.
+
+*   Step 2. Create an internal table for that structure
+    data: amounts_per_currency TYPE STANDARD TABLE OF ty_amount_per_currency.
+
+*   Step 3. Add the booking fee to the table
+    READ ENTITIES OF zr_gs_m_travel in LOCAL MODE
+        ENTITY travel
+        FIELDS ( BookingFee CurrencyCode )
+        WITH CORRESPONDING #( keys )
+        RESULT DATA(travels).
+
+*   Step 4. Read all the booking inside travel request. Loop at each booking data and convert to common currency and total
+    READ ENTITIES OF zr_gs_m_travel in LOCAL MODE
+        ENTITY travel by \_Booking
+        FIELDS ( FlightPrice CurrencyCode )
+        WITH CORRESPONDING #( travels )
+        RESULT DATA(bookings).
+
+*   Step 5. Read each of the supplement data, loop at it and convert to common currency total
+    READ ENTITIES OF zr_gs_m_travel in LOCAL MODE
+        ENTITY booking by \_BookSuppl
+        FIELDS ( Price CurrencyCode )
+        WITH CORRESPONDING #( bookings )
+        RESULT DATA(booksuppls).
+
+    "Delete all records with no currency code
+    DELETE travels where CurrencyCode is initial.
+    DELETE bookings where CurrencyCode is initial.
+    DELETE booksuppls where CurrencyCode is initial.
+
+*   Step 6. Total amount will be calculated by summing in common currency (header)
+    LOOP AT travels ASSIGNING FIELD-SYMBOL(<travel>).
+        "set first value in internal table for booking fee which comes from header
+        amounts_per_currency = value #( ( amount = <travel>-BookingFee currency_code = <travel>-CurrencyCode ) ).
+
+        "Loop at booking data and accumulate all bookings total in each currency
+        LOOP AT bookings into data(booking) where travelid = <travel>-TravelId.
+            collect value ty_amount_per_currency( amount = booking-FlightPrice currency_code = booking-CurrencyCode )
+                into amounts_per_currency.
+        endloop.
+
+        "Loop at booking supplement data and accumulate all bookings total in each currency
+        LOOP AT booksuppls into data(supplement) where travelid = <travel>-TravelId.
+            collect value ty_amount_per_currency( amount = supplement-Price currency_code = supplement-CurrencyCode )
+                into amounts_per_currency.
+        endloop.
+
+    endloop.
+
+    "Loop at each record in the temporary table, compare currency at header, if not match convert and total
+    clear <travel>-TotalPrice.
+
+    LOOP AT amounts_per_currency into data(amount_per_currency).
+        if amount_per_currency-currency_code = <travel>-CurrencyCode.
+            <travel>-TotalPrice += amount_per_currency-amount.
+
+        else.
+            "Currency Conversion
+            /dmo/cl_flight_amdp=>convert_currency(
+                EXPORTING
+                    iv_amount = amount_per_currency-amount
+                    iv_currency_code_source = amount_per_currency-currency_code
+                    iv_currency_code_target = <travel>-CurrencyCode
+                    iv_exchange_rate_date = cl_abap_context_info=>get_system_date( )
+                IMPORTING
+                    ev_amount = data(total_amount)
+             ).
+            <travel>-TotalPrice += total_amount.
+        endif.
+    ENDLOOP.
+
+*   Step 7. Fire EML to update data in database for the current travel request
+    MODIFY ENTITIES OF zr_gs_m_travel in LOCAL MODE
+            ENTITY travel
+                UPDATE fields ( TotalPrice )
+                WITH CORRESPONDING #( travels ).
+
+*   Step 8. Return the result data in the output
+
+  ENDMETHOD.
+
+  METHOD calculateTotalPrice.
+
+    modify entities of zr_gs_m_travel in LOCAL MODE
+        entity travel
+            execute calcTotalPrice
+                from corresponding #( keys ).
 
   ENDMETHOD.
 
